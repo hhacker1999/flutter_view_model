@@ -3,11 +3,18 @@ import 'package:rxdart/rxdart.dart';
 
 abstract class BaseModel<E, S> {
   late S _initialState;
+  late S _oldState;
+  late S _newState;
+  late E _evenTCalled;
   final BehaviorSubject<E> _eventSubject = BehaviorSubject<E>();
   final BehaviorSubject<S> _stateSubject = BehaviorSubject<S>();
   Future<void> _mapper() async {
     _event.listen((event) {
+      this._evenTCalled = event;
+      this._oldState = state.value;
       mapEventToState(event);
+      this._newState = state.value;
+      log('Event Called $_evenTCalled => [oldstate $_oldState, newstate $_newState]');
     });
   }
 
