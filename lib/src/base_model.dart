@@ -37,6 +37,7 @@ abstract class BaseModel<E, S> {
 
   BaseModel(S initialState, {E? autoEvent}) {
     this._initialState = initialState;
+    this._newState = initialState;
     _stateSubject.add(initialState);
 
     if (autoEvent != null) this.add(autoEvent);
