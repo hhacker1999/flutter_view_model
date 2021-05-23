@@ -33,8 +33,7 @@ abstract class BaseModel<E, S> {
   ValueStream<S> get state => _stateSubject.stream;
   ValueStream<E> get _event => _eventSubject.stream;
   void Function(E) get add => _eventSubject.add;
-  // ignore: unused_element
-  void Function(S) get _updateState => _stateSubject.add;
+  void Function(S) get updateState => _stateSubject.add;
 
   BaseModel(S initialState, {E? autoEvent}) {
     this._initialState = initialState;
