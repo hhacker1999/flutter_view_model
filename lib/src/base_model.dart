@@ -39,12 +39,11 @@ abstract class BaseModel<E, S> {
     this._initialState = initialState;
     this._newState = initialState;
     _stateSubject.add(initialState);
-
-    if (autoEvent != null) this.add(autoEvent);
     _mapper().then(
       (value) => log('View Model Fired with $E and $S'),
     );
     _logger();
+    if (autoEvent != null) this.add(autoEvent);
   }
 
   void dispose() {
@@ -52,6 +51,6 @@ abstract class BaseModel<E, S> {
     _eventSubject.close();
     _eventSubscription.cancel();
     _stateSubscription.cancel();
-    log('View Model. $E and $S disposed');
+    log('View Model, $E and $S disposed');
   }
 }
