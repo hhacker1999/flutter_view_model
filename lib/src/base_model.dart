@@ -13,10 +13,10 @@ abstract class BaseModel<E, S> {
   final BehaviorSubject<S> _stateSubject = BehaviorSubject<S>();
 
   Future<void> _mapper() async {
-    this._eventSubscription = _event.listen((event) {
+    this._eventSubscription = _event.listen((event) async {
       this._evenTCalled = event;
       log('Event Called ${this._evenTCalled}');
-      mapEventToState(event);
+      await mapEventToState(event);
     });
   }
 
