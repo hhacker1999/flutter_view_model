@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:rxdart/rxdart.dart';
 
@@ -6,15 +7,24 @@ abstract class BaseModel<E, S> {
   late S _oldState;
   late S _newState;
   late E _evenTCalled;
+  late StreamSubscription<E> _eventSubscription;
+  late StreamSubscription<S> _stateSubscription;
   final BehaviorSubject<E> _eventSubject = BehaviorSubject<E>();
   final BehaviorSubject<S> _stateSubject = BehaviorSubject<S>();
+
   Future<void> _mapper() async {
-    _event.listen((event) {
+    this._eventSubscription = _event.listen((event) {
       this._evenTCalled = event;
-      this._oldState = state.value;
+      log('Event Called ${this._evenTCalled}');
       mapEventToState(event);
-      this._newState = state.value;
-      log('Event Called $_evenTCalled => [oldstate $_oldState, newstate $_newState]');
+    });
+  }
+
+  Future<void> _logger() async {
+    this._stateSubscription = state.listen((state) {
+      this._oldState = this._newState;
+      this._newState = state;
+      log('State Changed [${this._oldState} => ${this._newState}]');
     });
   }
 
@@ -24,7 +34,7 @@ abstract class BaseModel<E, S> {
   ValueStream<E> get _event => _eventSubject.stream;
   Function(E) get add => _eventSubject.add;
   // ignore: unused_element
-  Function(S) get updateState => _stateSubject.add;
+  Function(S) get _updateState => _stateSubject.add;
 
   BaseModel(S initialState, {E? autoEvent}) {
     this._initialState = initialState;
@@ -34,11 +44,14 @@ abstract class BaseModel<E, S> {
     _mapper().then(
       (value) => log('View Model Fired with $E and $S'),
     );
+    _logger();
   }
 
   void dispose() {
     _stateSubject.close();
     _eventSubject.close();
+    _eventSubscription.cancel();
+    _stateSubscription.cancel();
     log('View Model. $E and $S disposed');
   }
 }
