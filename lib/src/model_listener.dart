@@ -3,9 +3,10 @@ import 'base_model.dart';
 import 'types.dart';
 
 class ModelListener<S, B extends BaseModel> extends StatefulWidget {
+  final Widget child;
   final ModelListenerWidget<S> listener;
   final B model;
-  const ModelListener({Key? key, required this.listener, required this.model})
+  const ModelListener({Key? key, required this.listener, required this.model, required this.child})
       : super(key: key);
 
   @override
@@ -24,6 +25,6 @@ class _ModelListenerState<S, B extends BaseModel>
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return widget.child;
   }
 }
